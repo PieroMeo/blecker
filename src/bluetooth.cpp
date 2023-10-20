@@ -169,11 +169,32 @@ class BlueTooth: public BLEAdvertisedDeviceCallbacks {
                         Device dev = devices.get(i);
                         // Example
                         // mosquitto_pub -h 127.0.0.1 -t home-assistant/device_tracker/a4567d663eaf/config -m '{"state_topic": "a4567d663eaf/state", "name": "My Tracker", "payload_home": "home", "payload_not_home": "not_home"}'
+/*
+{
+              "name": "fd9be47e8fdc",
+              "state_topic": "blecker/fd9be47e8fdc",
+              "command_topic": "device_tracker/fd9be47e8fdc/",
+              "payload_on": "1",
+              "payload_off": "0",
+              "state_on": "home",
+              "state_off": "not_home",
+              "unique_id": "fd9be47e8fdc",
+              "device": {
+                  "identifiers": ["fd9be47e8fdc"],
+                  "name": "JBD fd9be47e8fdc",
+                  "model": "JBD1582",
+                  "manufacturer": "J-Style",
+                  "sw_version": "1.X"
+              }
+            }
+*/
 
                         if (dev.mac != NULL) {
-                            String payload = "{\"state_topic\": \"" + mqttBaseTopic + "/" + dev.mac + "\", \"name\": \"" + dev.mac + "\", \"payload_home\": \"" + 
-                            this -> database->getValueAsString(DB_PRECENCE) + "\", \"payload_not_home\": \"" + 
-                            this -> database->getValueAsString(DB_NO_PRECENCE) + "\", \"source_type\": \"bluetooth_le\"}";
+                            String payload = "{\"state_topic\": \"" + mqttBaseTopic + "/" + dev.mac + "\", \"name\": \"" + dev.mac 
+							+ "\", \"unique_id\": \"" +  dev.mac 
+							+ "\", \"payload_home\": \"" +     this -> database->getValueAsString(DB_PRECENCE) 
+							+ "\", \"payload_not_home\": \"" + this -> database->getValueAsString(DB_NO_PRECENCE) 
+							+ "\", \"source_type\": \"bluetooth_le\"}";
 
                             MQTTMessage autoDiscMessage = MQTTMessage{autoDiscoveryPrefix + "/device_tracker/" + dev.mac + "/config", payload, false, true};
                             mqttMessageSend->fire(autoDiscMessage);
